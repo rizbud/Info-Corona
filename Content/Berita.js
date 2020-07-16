@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { WebView } from 'react-native-webview';
-
+//import { WebView } from 'react-native-webview';
+/*
 class Berita extends Component {
   render() {
     return (
@@ -12,4 +12,5 @@ class Berita extends Component {
   }
 }
 
-expot default Berita
+export default Berita
+*/

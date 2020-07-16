@@ -4,7 +4,7 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Main from './Content/Main';
 import Lengkap from "./Content/Lengkap";
-import Berita from "./Content/Berita";
+//import Berita from "./Content/Berita";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +34,7 @@ const App = () => {
             }
           }}
         />
+        {/*
         <Stack.Screen 
           name="Berita"
           component={Berita}
@@ -41,6 +42,7 @@ const App = () => {
             title: ""
           }}
         />
+        */}
       </Stack.Navigator>
     </NavigationContainer>
   )

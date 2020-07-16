@@ -4,7 +4,7 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Main from './Content/Main';
 import Lengkap from "./Content/Lengkap";
-import Lengkap from "./Content/Berita";
+import Berita from "./Content/Berita";
 
 const Stack = createStackNavigator();
 

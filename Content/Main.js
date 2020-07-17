@@ -6,7 +6,7 @@ import{
   Image,
   StatusBar,
   StyleSheet,
-  Dimensions,
+  ActivityIndicator,
   TouchableOpacity,
   ToastAndroid,
   RefreshControl
@@ -66,7 +66,7 @@ class Main extends Component {
     })
     .finally(() => {
       this.setState({refreshing: false})
-      ToastAndroid.show('Terakhir Update: Baru saja', ToastAndroid.SHORT)
+      ToastAndroid.show('#DiRumahAja', ToastAndroid.SHORT)
     })
   }
 
@@ -74,13 +74,92 @@ class Main extends Component {
     this._isMounted = false;
   }
 
-  _onRefresh= () => {
+  _onRefresh = () => {
     this.setState({refreshing: true});
     this.componentDidMount();
   }
 
   render () {
     const {dataIdn, dataGlobal, news} = this.state
+    let tampil;
+    if (this.state.refreshing) {
+      tampil = <ActivityIndicator />
+    } else {
+      tampil = <><View>
+                  <Image
+                    source={require('./image/cover.png')}
+                    style={{
+                      width: "100%",
+                      height: 175,
+                      resizeMode: 'stretch'
+                      }} />
+                </View>
+                <View style={{marginTop: 10}}>
+                  <Text style={styles.title}>COVID-19 di Indonesia</Text>
+                  <View style={styles.stats}>
+                    <View style={styles.aktif}>
+                      <Text style={styles.titleKasus}>Kasus Aktif</Text>
+                      <Text style={styles.textKasus}>{format(dataIdn.perawatan != undefined ? dataIdn.perawatan : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                    <View style={styles.sembuh}>
+                      <Text style={styles.titleKasus}>Sembuh</Text>
+                      <Text style={styles.textKasus}>{format(dataIdn.sembuh != undefined ? dataIdn.sembuh : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                  </View>
+                  <View style={styles.stats}>
+                    <View style={styles.meningal}>
+                      <Text style={styles.titleKasus}>Meninggal</Text>
+                      <Text style={styles.textKasus}>{format(dataIdn.meninggal != undefined ? dataIdn.meninggal : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                    <View style={styles.total}>
+                      <Text style={styles.titleKasus}>Total Kasus</Text>
+                      <Text style={styles.textKasus}>{format(dataIdn.jumlahKasus != undefined ? dataIdn.jumlahKasus : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('Lengkap')}>
+                    <Text style={styles.detailText}>Selengkapnya ></Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{marginTop: 10}}>
+                  <Text style={styles.title}>COVID-19 di Dunia</Text>
+                  <View style={styles.stats}>
+                    <View style={styles.total}>
+                      <Text style={styles.titleKasus}>Total Kasus</Text>
+                      <Text style={styles.textKasus}>{format(dataGlobal.confirmed != undefined ? dataGlobal.confirmed.value : "")} Orang</Text>
+                    </View>
+                  </View>
+                  <View style={styles.stats}>
+                    <View style={styles.meningal}>
+                      <Text style={styles.titleKasus}>Meninggal</Text>
+                      <Text style={styles.textKasus}>{format(dataGlobal.deaths != undefined ? dataGlobal.deaths.value : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                  <View style={styles.sembuh}>
+                      <Text style={styles.titleKasus}>Sembuh</Text>
+                      <Text style={styles.textKasus}>{format(dataGlobal.recovered != undefined ? dataGlobal.recovered.value : "")}</Text>
+                      <Text style={styles.titleKasus}>Orang</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={{marginTop: 10}}>
+                  <Text style={styles.title}>Berita Terbaru</Text>
+                  {news.slice(0,19).map((item,index) => (
+                    <TouchableOpacity key={index} style={styles.berita} onPress={() => this.props.navigation.navigate('Berita', {url: item.url, judul: item.title})}>
+                      <Text style={styles.textBerita}>{item.title}</Text>
+                      <View style={styles.bacaBerita}>
+                        <Text style={{color:"#3389fe", fontFamily: "IBM-Thin"}}>Baca...</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View></>
+    }
+
     return (
       <>
         <StatusBar backgroundColor="#e6e6e6" barStyle="dark-content" />
@@ -91,79 +170,7 @@ class Main extends Component {
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh} />}
           >
-          <View>
-            <Image
-              source={require('./image/cover.png')}
-              style={{
-                width: "100%",
-                height: 175,
-                resizeMode: 'stretch'
-                }} />
-          </View>
-          <View style={{marginTop: 10}}>
-            <Text style={styles.title}>COVID-19 di Indonesia</Text>
-            <View style={styles.stats}>
-              <View style={styles.aktif}>
-                <Text style={styles.titleKasus}>Kasus Aktif</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.perawatan != undefined ? dataIdn.perawatan : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-              <View style={styles.sembuh}>
-                <Text style={styles.titleKasus}>Sembuh</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.sembuh != undefined ? dataIdn.sembuh : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-            </View>
-            <View style={styles.stats}>
-              <View style={styles.meningal}>
-                <Text style={styles.titleKasus}>Meninggal</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.meninggal != undefined ? dataIdn.meninggal : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-              <View style={styles.total}>
-                <Text style={styles.titleKasus}>Total Kasus</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.jumlahKasus != undefined ? dataIdn.jumlahKasus : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Lengkap')}>
-              <Text style={styles.detailText}>Selengkapnya ></Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={{marginTop: 10}}>
-            <Text style={styles.title}>COVID-19 di Dunia</Text>
-            <View style={styles.stats}>
-              <View style={styles.total}>
-                <Text style={styles.titleKasus}>Total Kasus</Text>
-                <Text style={styles.textKasus}>{format(dataGlobal.confirmed != undefined ? dataGlobal.confirmed.value : "")} Orang</Text>
-              </View>
-            </View>
-            <View style={styles.stats}>
-              <View style={styles.meningal}>
-                <Text style={styles.titleKasus}>Meninggal</Text>
-                <Text style={styles.textKasus}>{format(dataGlobal.deaths != undefined ? dataGlobal.deaths.value : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-            <View style={styles.sembuh}>
-                <Text style={styles.titleKasus}>Sembuh</Text>
-                <Text style={styles.textKasus}>{format(dataGlobal.recovered != undefined ? dataGlobal.recovered.value : "")}</Text>
-                <Text style={styles.titleKasus}>Orang</Text>
-              </View>
-            </View>
-          </View>
-          
-          <View style={{marginTop: 10}}>
-            <Text style={styles.title}>Berita Terbaru</Text>
-            {news.slice(0,19).map((item,index) => (
-              <TouchableOpacity key={index} style={styles.berita} onPress={() => ToastAndroid.show(item.url, ToastAndroid.SHORT)}>
-                <Text style={styles.textBerita}>{item.title}</Text>
-                <View style={styles.bacaBerita}>
-                  <Text style={{color:"#3389fe", fontFamily: "IBM-Thin"}}>Baca...</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {tampil}
         </ScrollView>
       </>
     )

@@ -6,7 +6,8 @@ import {
   StatusBar,
   StyleSheet,
   ToastAndroid,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 
 const format = amount => {
@@ -41,7 +42,7 @@ class Lengkap extends Component {
     })
     .finally(() => {
       this.setState({refreshing: false})
-      ToastAndroid.show('Terakhir Update: Baru saja', ToastAndroid.SHORT)
+      ToastAndroid.show('#DiRumahAja', ToastAndroid.SHORT)
     })
   }
 
@@ -49,7 +50,7 @@ class Lengkap extends Component {
     this._isMounted = false;
   }
 
-  _onRefresh= () => {
+  _onRefresh = () => {
     this.setState({refreshing: true});
     this.componentDidMount();
   }
@@ -57,6 +58,31 @@ class Lengkap extends Component {
   render() {
 
     const {dataProv} = this.state;
+    let tampil
+    if (this.state.refreshing) {
+      tampil = <ActivityIndicator />
+    } else {
+      tampil = <View>
+      {dataProv.slice(0,(dataProv.length-1)).map((item, index) => (
+        <View key={index} style={styles.provinsi}>
+          <Text style={styles.textProv}>{item.provinsi}</Text>
+          <View style={{flexDirection: "row"}}>
+          <View style={styles.aktif}>
+            <Text style={styles.titleKasus}>Positif</Text>
+            <Text style={styles.textKasus}>{format(item.kasusPosi != undefined ? item.kasusPosi : "")}</Text>
+          </View>
+          <View style={styles.sembuh}>
+            <Text style={styles.titleKasus}>Sembuh</Text>
+            <Text style={styles.textKasus}>{format(item.kasusSemb != undefined ? item.kasusSemb : "")}</Text>
+          </View>
+          <View style={styles.meningal}>
+            <Text style={styles.titleKasus}>Meninggal</Text>
+            <Text style={styles.textKasus}>{format(item.kasusMeni != undefined ? item.kasusMeni : "")}</Text>
+          </View>
+          </View>
+        </View>
+      ))}</View>
+    }
 
     return (
       <>
@@ -68,25 +94,7 @@ class Lengkap extends Component {
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh} />}
           >
-          {dataProv.slice(0,(dataProv.length-1)).map((item, index) => (
-            <View key={index} style={styles.provinsi}>
-              <Text style={styles.textProv}>{item.provinsi}</Text>
-              <View style={{flexDirection: "row"}}>
-              <View style={styles.aktif}>
-                <Text style={styles.titleKasus}>Positif</Text>
-                <Text style={styles.textKasus}>{format(item.kasusPosi != undefined ? item.kasusPosi : "")}</Text>
-              </View>
-              <View style={styles.sembuh}>
-                <Text style={styles.titleKasus}>Sembuh</Text>
-                <Text style={styles.textKasus}>{format(item.kasusSemb != undefined ? item.kasusSemb : "")}</Text>
-              </View>
-              <View style={styles.meningal}>
-                <Text style={styles.titleKasus}>Meninggal</Text>
-                <Text style={styles.textKasus}>{format(item.kasusMeni != undefined ? item.kasusMeni : "")}</Text>
-              </View>
-              </View>
-            </View>
-          ))}
+          {tampil}
         </ScrollView>
       </>
     )

@@ -1,4 +1,4 @@
-package com.covidnews;
+package com.infocorona;
 
 import com.facebook.react.ReactActivity;
 

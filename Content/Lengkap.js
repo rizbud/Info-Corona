@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ToastAndroid,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  BackHandler
 } from "react-native";
 
 const format = amount => {
@@ -27,18 +28,35 @@ class Lengkap extends Component {
     }
   }
 
+  backButton = () => {
+    this.props.navigation.goBack()
+    return true
+  }
+
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backButton)
     this._isMounted = true;
 
+    //Set Timeout
+    function timeout(ms, promise) {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          reject(new Error("Gagal memuat, periksa koneksi anda"))
+        }, ms)
+        promise.then(resolve, reject)
+      })
+    }
+
     //Fetch Data Provinsi
-    fetch('https://indonesia-covid-19.mathdro.id/api/provinsi')
+    timeout(20000, fetch('https://indonesia-covid-19.mathdro.id/api/provinsi'))
     .then((response) => response.json())
     .then((json) => {
       this.setState({dataProv: json.data})
     })
     .catch(err => {
       console.log(err)
-      ToastAndroid.show('Gagal memuat', ToastAndroid.SHORT)
+      this.setState({refreshing: false})
+      ToastAndroid.show('Gagal memuat, periksa koneksi anda', ToastAndroid.SHORT)
     })
     .finally(() => {
       this.setState({refreshing: false})
@@ -47,6 +65,7 @@ class Lengkap extends Component {
   }
 
   componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backButton)
     this._isMounted = false;
   }
 
@@ -58,31 +77,6 @@ class Lengkap extends Component {
   render() {
 
     const {dataProv} = this.state;
-    let tampil
-    if (this.state.refreshing) {
-      tampil = <ActivityIndicator />
-    } else {
-      tampil = <View>
-      {dataProv.slice(0,(dataProv.length-1)).map((item, index) => (
-        <View key={index} style={styles.provinsi}>
-          <Text style={styles.textProv}>{item.provinsi}</Text>
-          <View style={{flexDirection: "row"}}>
-          <View style={styles.aktif}>
-            <Text style={styles.titleKasus}>Positif</Text>
-            <Text style={styles.textKasus}>{format(item.kasusPosi != undefined ? item.kasusPosi : "")}</Text>
-          </View>
-          <View style={styles.sembuh}>
-            <Text style={styles.titleKasus}>Sembuh</Text>
-            <Text style={styles.textKasus}>{format(item.kasusSemb != undefined ? item.kasusSemb : "")}</Text>
-          </View>
-          <View style={styles.meningal}>
-            <Text style={styles.titleKasus}>Meninggal</Text>
-            <Text style={styles.textKasus}>{format(item.kasusMeni != undefined ? item.kasusMeni : "")}</Text>
-          </View>
-          </View>
-        </View>
-      ))}</View>
-    }
 
     return (
       <>
@@ -94,7 +88,25 @@ class Lengkap extends Component {
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh} />}
           >
-          {tampil}
+          {dataProv.slice(0,(dataProv.length-1)).map((item, index) => (
+            <View key={index} style={styles.provinsi}>
+              <Text style={styles.textProv}>{item.provinsi}</Text>
+              <View style={{flexDirection: "row"}}>
+              <View style={styles.aktif}>
+                <Text style={styles.titleKasus}>Positif</Text>
+                <Text style={styles.textKasus}>{format(item.kasusPosi != undefined ? item.kasusPosi : "")}</Text>
+              </View>
+              <View style={styles.sembuh}>
+                <Text style={styles.titleKasus}>Sembuh</Text>
+                <Text style={styles.textKasus}>{format(item.kasusSemb != undefined ? item.kasusSemb : "")}</Text>
+              </View>
+              <View style={styles.meningal}>
+                <Text style={styles.titleKasus}>Meninggal</Text>
+                <Text style={styles.textKasus}>{format(item.kasusMeni != undefined ? item.kasusMeni : "")}</Text>
+              </View>
+              </View>
+            </View>
+          ))}
         </ScrollView>
       </>
     )

@@ -5,13 +5,25 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Main from './Content/Main';
 import Lengkap from "./Content/Lengkap";
 import Berita from "./Content/Berita";
+import Splash from "./Content/Splash";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{ gestureEnabled: false }}
+        initialRouteName="Splash"
+        headerMode="screen"
+      >
+        <Stack.Screen 
+          name="Splash"
+          component={Splash}
+          options={{
+            headerShown: false
+          }}
+        />
         <Stack.Screen 
           name="Home"
           component={Main}

@@ -10,6 +10,8 @@ import{
 
 const w = Dimensions.get('screen').width;
 
+import styles from './styles/splashStyle'
+
 class Splash extends Component {
   constructor(props) {
     super(props)
@@ -45,24 +47,5 @@ class Splash extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  splash: {
-    backgroundColor: "#dbecff",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1
-  },
-  image: {
-    width: w,
-    height: w,
-    resizeMode: "stretch"
-  },
-  text: {
-    fontFamily: "Montserrat",
-    alignSelf: "center",
-    color: "#1b305d"
-  }
-})
 
 export default Splash

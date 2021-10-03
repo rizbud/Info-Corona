@@ -27,6 +27,7 @@ class Main extends Component {
     super(props);
     this.state = {
       dataIdn: {},
+      total: null,
       dataGlobal: {},
       refreshing: true,
       news: []
@@ -53,10 +54,13 @@ class Main extends Component {
     }
 
     //Indonesia
-    timeout(20000, fetch('https://indonesia-covid-19.mathdro.id/api'))
+    timeout(20000, fetch('https://api.kawalcorona.com/indonesia'))
     .then((response) => response.json())
     .then((json) => {
-      this.setState({dataIdn: json})
+      this.setState({
+        dataIdn: json[0],
+        total: 'Not Available'
+      })
     })
     .catch(err => {
       console.log(err)
@@ -100,7 +104,7 @@ class Main extends Component {
   }
 
   render () {
-    const {dataIdn, dataGlobal, news} = this.state
+    const {dataIdn, dataGlobal, news, total} = this.state
     return (
       <>
         <StatusBar backgroundColor="#e6e6e6" barStyle="dark-content" />
@@ -125,24 +129,24 @@ class Main extends Component {
             <View style={styles.stats}>
               <View style={styles.aktif}>
                 <Text style={styles.titleKasus}>Kasus Aktif</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.perawatan != undefined ? dataIdn.perawatan : "")}</Text>
+                <Text style={styles.textKasus}>{dataIdn.positif != undefined ? dataIdn.dirawat : ""}</Text>
                 <Text style={styles.titleKasus}>Orang</Text>
               </View>
               <View style={styles.sembuh}>
                 <Text style={styles.titleKasus}>Sembuh</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.sembuh != undefined ? dataIdn.sembuh : "")}</Text>
+                <Text style={styles.textKasus}>{dataIdn.sembuh != undefined ? dataIdn.sembuh : ""}</Text>
                 <Text style={styles.titleKasus}>Orang</Text>
               </View>
             </View>
             <View style={styles.stats}>
               <View style={styles.meningal}>
                 <Text style={styles.titleKasus}>Meninggal</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.meninggal != undefined ? dataIdn.meninggal : "")}</Text>
+                <Text style={styles.textKasus}>{dataIdn.meninggal != undefined ? dataIdn.meninggal : ""}</Text>
                 <Text style={styles.titleKasus}>Orang</Text>
               </View>
               <View style={styles.total}>
                 <Text style={styles.titleKasus}>Total Kasus</Text>
-                <Text style={styles.textKasus}>{format(dataIdn.jumlahKasus != undefined ? dataIdn.jumlahKasus : "")}</Text>
+                <Text style={styles.textKasus}>{total != undefined ? total : ""}</Text>
                 <Text style={styles.titleKasus}>Orang</Text>
               </View>
             </View>

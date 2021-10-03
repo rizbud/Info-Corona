@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import 'react-native-gesture-handler';
 import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,6 +10,13 @@ import Splash from "./Content/Splash";
 const Stack = createStackNavigator();
 
 const App = () => {
+  useEffect(()=>{
+    if(__DEV__) {
+      import('./config/ReactTotronConfig')
+      .then(() => console.log('Reactotron Configured'))
+    }
+  },[])
+
   return (
     <NavigationContainer>
       <Stack.Navigator
